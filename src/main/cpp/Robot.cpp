@@ -59,15 +59,36 @@ void Robot::TeleopInit() {
   double kWheelRadius       = 1.0;
   double kEncoderResolution = 1.0;
 
-  double positonConversionFactor  = 2.0 * std::numbers::pi * kWheelRadius / kEncoderResolution;
-  double velocityConversionFactor = 2.0 * std::numbers::pi * kWheelRadius / kEncoderResolution;
+  double positonConversionFactor  = 3.9*std::numbers::pi/8.14*0.0254; //* std::numbers::pi * kWheelRadius / kEncoderResolution;
+  double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;//2.0 * std::numbers::pi * kWheelRadius / kEncoderResolution;
   
-  //m_analog0.SetDistancePerRotation( 2.0 * std::numbers::pi );
+  m_analog0.SetDistancePerRotation( 2.0 * std::numbers::pi );
   //m_analog1.SetDistancePerRotation( 2.0 * std::numbers::pi );
   //m_analog2.SetDistancePerRotation( 2.0 * std::numbers::pi );
   //m_analog3.SetDistancePerRotation( 2.0 * std::numbers::pi );
+  // output = X * positonConversionFactor
+  // 0      = 0 * positonConversionFactor
+  // 1      = 8.192 * positonConversionFactor
+  // 1 / 8.192 = positonConversionFactor
+
+// RPM = Revs / Minute
+// MPS Meters / Second
+
+// MPS = RPM * .03798903421 = 3.9*pi/8.192*0.0254
+
+// Meters / Seconds = Revs / Minute * X
+
+// X = (1.0/60.0) * 3.9*std::numbers::pi*0.0254
+
+
+//10/8.1 revs/second
+//meters per rev= 3.9*std::numbers::*0.0254
+
+
+
 
   m_driveEncoder0.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder0.SetPosition(0);
   /*m_driveEncoder1.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder2.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder3.SetPositionConversionFactor(positonConversionFactor);!*/
@@ -88,7 +109,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 
-  frc::SmartDashboard::PutNumber("Analog 0", m_analog0.GetAbsolutePosition());
+  frc::SmartDashboard::PutNumber("Analog 0", m_analog0.GetDistance());
   /*frc::SmartDashboard::PutNumber("Analog 1", m_analog1.GetAbsolutePosition());
   frc::SmartDashboard::PutNumber("Analog 2", m_analog2.GetAbsolutePosition()); 
   frc::SmartDashboard::PutNumber("Analog 3", m_analog3.GetAbsolutePosition());*/
@@ -102,6 +123,40 @@ void Robot::TeleopPeriodic() {
   /*frc::SmartDashboard::PutNumber("VEL Drive Enc 1", m_driveEncoder1.GetVelocity());
   frc::SmartDashboard::PutNumber("VEL Drive Enc 2", m_driveEncoder2.GetVelocity()); 
   frc::SmartDashboard::PutNumber("VEL Drive Enc 3", m_driveEncoder3.GetVelocity());*/
+
+  if( m_controller.GetAButton() )
+  {
+    m_driveMotor0.Set(0.1);
+  }
+  else if( m_controller.GetBButton() )
+  {
+    m_driveMotor0.Set(-0.1);
+  }
+  else
+  {
+    m_driveMotor0.Set(0);
+  }
+
+if(m_controller.GetLeftBumper())
+{
+  m_turnMotor0.Set(0.05);
+}
+else if(m_controller.GetRightBumper())
+{
+  m_turnMotor0.Set(-0.05);
+}
+else
+{
+  m_turnMotor0.Set(0);
+}
+
+
+
+
+
+
+
+
 
 }
 
