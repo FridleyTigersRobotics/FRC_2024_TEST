@@ -20,15 +20,16 @@ SwerveModule::SwerveModule(const int driveMotorChannel,
   // Set the distance per pulse for the drive encoder. We can simply use the
   // distance traveled for one rotation of the wheel divided by the encoder
   // resolution.
-  m_driveEncoder.SetPositionConversionFactor(2 * std::numbers::pi * kWheelRadius /
-                                     kEncoderResolution);
+  double positonConversionFactor  = 3.9*std::numbers::pi/8.14*0.0254;
+  double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;
+
+  m_driveEncoder.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder.SetVelocityConversionFactor(velocityConversionFactor);
 
   // Set the distance (in this case, angle) per pulse for the turning encoder.
   // This is the the angle through an entire rotation (2 * std::numbers::pi)
   // divided by the encoder resolution.
- // m_turningEncoder.SetDistancePerPulse(2 * std::numbers::pi /
-  //                                     kEncoderResolution);
-
+  m_turningEncoder.SetDistancePerRotation( 2.0 * std::numbers::pi );
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
   m_turningPIDController.EnableContinuousInput(

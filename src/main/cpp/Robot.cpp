@@ -62,10 +62,27 @@ void Robot::TeleopInit() {
   double positonConversionFactor  = 3.9*std::numbers::pi/8.14*0.0254; //* std::numbers::pi * kWheelRadius / kEncoderResolution;
   double velocityConversionFactor = (1.0/60.0) * positonConversionFactor;//2.0 * std::numbers::pi * kWheelRadius / kEncoderResolution;
   
-  m_analog0.SetDistancePerRotation( 2.0 * std::numbers::pi );
-  //m_analog1.SetDistancePerRotation( 2.0 * std::numbers::pi );
-  //m_analog2.SetDistancePerRotation( 2.0 * std::numbers::pi );
-  //m_analog3.SetDistancePerRotation( 2.0 * std::numbers::pi );
+  m_analog0.SetDistancePerRotation( 2.0 * std::numbers::pi ); //1.230863 Drive motor #10
+  m_analog1.SetDistancePerRotation( 2.0 * std::numbers::pi ); //0.909437 Drive motor #12
+  m_analog2.SetDistancePerRotation( 2.0 * std::numbers::pi ); //0.255626 Drive motor #14
+  m_analog3.SetDistancePerRotation( 2.0 * std::numbers::pi ); //4.980153 Drive motor #16
+  
+  //
+  //-----------|Front|------------
+  //  16----------------------12
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  |------------------------|
+  //  14----------------------10
+  //------------|back|-------------
+  //
+  
   // output = X * positonConversionFactor
   // 0      = 0 * positonConversionFactor
   // 1      = 8.192 * positonConversionFactor
@@ -89,13 +106,16 @@ void Robot::TeleopInit() {
 
   m_driveEncoder0.SetPositionConversionFactor(positonConversionFactor);
   m_driveEncoder0.SetPosition(0);
-  /*m_driveEncoder1.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder1.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder1.SetPosition(0);
   m_driveEncoder2.SetPositionConversionFactor(positonConversionFactor);
-  m_driveEncoder3.SetPositionConversionFactor(positonConversionFactor);!*/
+  m_driveEncoder2.SetPosition(0);
+  m_driveEncoder3.SetPositionConversionFactor(positonConversionFactor);
+  m_driveEncoder3.SetPosition(0);
   m_driveEncoder0.SetVelocityConversionFactor(velocityConversionFactor);
-  /*m_driveEncoder1.SetVelocityConversionFactor(velocityConversionFactor);
+  m_driveEncoder1.SetVelocityConversionFactor(velocityConversionFactor);
   m_driveEncoder2.SetVelocityConversionFactor(velocityConversionFactor);
-  m_driveEncoder3.SetVelocityConversionFactor(velocityConversionFactor);*/
+  m_driveEncoder3.SetVelocityConversionFactor(velocityConversionFactor);
 
   /*if( m_controller.GetAButton() )
   {
@@ -110,44 +130,62 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 
   frc::SmartDashboard::PutNumber("Analog 0", m_analog0.GetDistance());
-  /*frc::SmartDashboard::PutNumber("Analog 1", m_analog1.GetAbsolutePosition());
-  frc::SmartDashboard::PutNumber("Analog 2", m_analog2.GetAbsolutePosition()); 
-  frc::SmartDashboard::PutNumber("Analog 3", m_analog3.GetAbsolutePosition());*/
+  frc::SmartDashboard::PutNumber("Analog 1", m_analog1.GetDistance());
+  frc::SmartDashboard::PutNumber("Analog 2", m_analog2.GetDistance()); 
+  frc::SmartDashboard::PutNumber("Analog 3", m_analog3.GetDistance());
 
   frc::SmartDashboard::PutNumber("POS Drive Enc 0", m_driveEncoder0.GetPosition());
-  /*frc::SmartDashboard::PutNumber("POS Drive Enc 1", m_driveEncoder1.GetPosition());
+  frc::SmartDashboard::PutNumber("POS Drive Enc 1", m_driveEncoder1.GetPosition());
   frc::SmartDashboard::PutNumber("POS Drive Enc 2", m_driveEncoder2.GetPosition()); 
-  frc::SmartDashboard::PutNumber("POS Drive Enc 3", m_driveEncoder3.GetPosition());*/
+  frc::SmartDashboard::PutNumber("POS Drive Enc 3", m_driveEncoder3.GetPosition());
 
   frc::SmartDashboard::PutNumber("VEL Drive Enc 0", m_driveEncoder0.GetVelocity());
-  /*frc::SmartDashboard::PutNumber("VEL Drive Enc 1", m_driveEncoder1.GetVelocity());
+  frc::SmartDashboard::PutNumber("VEL Drive Enc 1", m_driveEncoder1.GetVelocity());
   frc::SmartDashboard::PutNumber("VEL Drive Enc 2", m_driveEncoder2.GetVelocity()); 
-  frc::SmartDashboard::PutNumber("VEL Drive Enc 3", m_driveEncoder3.GetVelocity());*/
+  frc::SmartDashboard::PutNumber("VEL Drive Enc 3", m_driveEncoder3.GetVelocity());
 
   if( m_controller.GetAButton() )
   {
-    m_driveMotor0.Set(0.1);
+    m_driveMotor0.Set(0.3);
+    m_driveMotor1.Set(0.3);
+    m_driveMotor2.Set(0.3);
+    m_driveMotor3.Set(0.3);
   }
   else if( m_controller.GetBButton() )
   {
-    m_driveMotor0.Set(-0.1);
+    m_driveMotor0.Set(-0.3);
+    m_driveMotor1.Set(-0.3);
+    m_driveMotor2.Set(-0.3);
+    m_driveMotor3.Set(-0.3);
   }
   else
   {
     m_driveMotor0.Set(0);
+    m_driveMotor1.Set(0);
+    m_driveMotor2.Set(0);
+    m_driveMotor3.Set(0);
   }
 
 if(m_controller.GetLeftBumper())
 {
-  m_turnMotor0.Set(0.05);
+  m_turnMotor0.Set(0.3);
+  m_turnMotor1.Set(0.3);
+  m_turnMotor2.Set(0.3);
+  m_turnMotor3.Set(0.3);
 }
 else if(m_controller.GetRightBumper())
 {
-  m_turnMotor0.Set(-0.05);
+  m_turnMotor0.Set(-0.3);
+  m_turnMotor1.Set(-0.3);
+  m_turnMotor2.Set(-0.3);
+  m_turnMotor3.Set(-0.3);
 }
 else
 {
   m_turnMotor0.Set(0);
+  m_turnMotor1.Set(0);
+  m_turnMotor2.Set(0);
+  m_turnMotor3.Set(0);
 }
 
 
